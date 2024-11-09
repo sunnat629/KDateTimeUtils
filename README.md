@@ -15,9 +15,13 @@ A **Kotlin Multiplatform library** for date and time utilities, designed for mod
 
 ## Getting Started
 
-### Gradle Setup
+### **Gradle Setup for All Platforms**
 
-Add the following dependencies to your project.
+Here's a comprehensive guide on how to include `kDateTimeX` for each supported platform in your Kotlin Multiplatform project. The library is published under the namespace `dev.sunnat629` on Maven Central.
+
+#### **Common Dependency**
+
+To add the library for all platforms, include the following in your `commonMain` source set:
 
 ```kotlin
 // Root build.gradle.kts
@@ -25,18 +29,103 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation("dev.sunnat629.libs:kDateTimeX:1.0.0")
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("dev.sunnat629:kDateTimeX:$lib_version")
+            }
+        }
+    }
 }
 ```
 
-### Supported Platforms
+### **Platform-Specific Dependencies**
 
-- **Android**: `kDateTimeX-android`
-- **JVM**: `kDateTimeX-jvm`
-- **JavaScript**: `kDateTimeX-js`
-- **iOS**: `kDateTimeX-ios`
-- **WebAssembly (WASM)**: `kDateTimeX-wasm-js`
+If you want to include the library only for specific platforms, use the following configuration.
+
+#### **1. Android**
+
+```kotlin
+androidMain {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-android:$lib_version")
+    }
+}
+```
+
+#### **2. JVM**
+
+```kotlin
+jvmMain {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-jvm:$lib_version")
+    }
+}
+```
+
+#### **3. JavaScript**
+
+```kotlin
+jsMain {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-js:$lib_version")
+    }
+}
+```
+
+#### **4. iOS (Arm64, X64, Simulator Arm64)**
+
+```kotlin
+iosArm64Main {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-ios:$lib_version")
+    }
+}
+
+iosX64Main {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-ios:$lib_version")
+    }
+}
+
+iosSimulatorArm64Main {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-ios:$lib_version")
+    }
+}
+```
+
+#### **5. WebAssembly (WASM)**
+
+```kotlin
+wasmMain {
+    dependencies {
+        implementation("dev.sunnat629:kDateTimeX-wasm-js:$lib_version")
+    }
+}
+```
+
+### **Supported Platforms**
+
+| Platform   | Artifact ID               | Example Dependency                                 |
+|------------|---------------------------|----------------------------------------------------|
+| Common     | `kDateTimeX`              | `implementation("dev.sunnat629:kDateTimeX:$lib_version")` |
+| Android    | `kDateTimeX-android`      | `implementation("dev.sunnat629:kDateTimeX-android:$lib_version")` |
+| JVM        | `kDateTimeX-jvm`          | `implementation("dev.sunnat629:kDateTimeX-jvm:$lib_version")` |
+| JavaScript | `kDateTimeX-js`           | `implementation("dev.sunnat629:kDateTimeX-js:$lib_version")` |
+| iOS        | `kDateTimeX-ios`          | `implementation("dev.sunnat629:kDateTimeX-ios:$lib_version")` |
+| WASM       | `kDateTimeX-wasm-js`      | `implementation("dev.sunnat629:kDateTimeX-wasm-js:$lib_version")` |
+
+> **Note**: In the current version (`1.0.0`), there are no specific platform-dependent implementations. All the utility functions are part of the **Common** module, so using the common dependency (`kDateTimeX`) is sufficient for all platforms. Separate platform artifacts are provided for compatibility with Kotlin Multiplatform's dependency management, but they do not contain unique platform-specific code.
+
+
+
+### **Additional Notes**
+
+- Ensure you have `mavenCentral()` added to your repositories in the root `build.gradle.kts`.
+- The common dependency `kDateTimeX` includes shared utilities for all platforms.
+- For platform-specific features, use the corresponding artifact ID.
 
 ### Usage
 
