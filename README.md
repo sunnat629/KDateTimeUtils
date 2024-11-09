@@ -134,7 +134,7 @@ wasmMain {
 ```kotlin
 import dev.sunnat629.libs.kdatetimex.*
 
-val epochSeconds = 1634070400L
+val epochSeconds = 1731186379L
 val formattedDate = epochSeconds.toLocalDateTime().toHumanReadableString()
 println("Formatted Date: $formattedDate")
 ```
