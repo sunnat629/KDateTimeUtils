@@ -70,7 +70,7 @@ println("Human Readable Time: $humanReadableTime")
 
 ## Documentation
 
-Detailed documentation and examples are available in the [Wiki](https://github.com/sunnat629/KDateTimeUtils/WIKI.md).
+Detailed documentation and examples are available in the [Wiki](WIKI.md).
 
 ## Changelog
 
@@ -78,11 +78,11 @@ See the [Changelog](https://github.com/sunnat629/KDateTimeUtils/releases) for re
 
 ## Contributing
 
-We welcome contributions! Please read our [Contributing Guide](https://github.com/sunnat629/KDateTimeUtils/blob/main/CONTRIBUTING.md) for guidelines.
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/sunnat629/KDateTimeUtils/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
