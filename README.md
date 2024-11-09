@@ -1,6 +1,6 @@
 # KDateTimeX
 
-[![Maven Central](https://img.shields.io/maven-central/v/dev.sunnat629.libs/kDateTimeX)](https://central.sonatype.com/namespace/dev.sunnat629)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.sunnat629/kDateTimeX)](https://central.sonatype.com/namespace/dev.sunnat629)
 [![License](https://img.shields.io/github/license/sunnat629/KDateTimeUtils)](https://opensource.org/licenses/MIT)
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-blue)](https://kotlinlang.org/docs/multiplatform.html)
 
