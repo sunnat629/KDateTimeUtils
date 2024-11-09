@@ -15,9 +15,9 @@ object UtilityFunctions {
      */
     fun formatTimeDifference(diffSeconds: Long): String {
         return when (diffSeconds) {
-            0L -> "Last updated now"
-            1L -> "Last updated 1 second ago"
-            else -> "Last updated $diffSeconds seconds ago"
+            0L -> "now"
+            1L -> "1 second ago"
+            else -> "$diffSeconds seconds ago"
         }
     }
 

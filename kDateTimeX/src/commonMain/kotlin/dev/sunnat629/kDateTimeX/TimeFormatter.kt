@@ -1,12 +1,8 @@
 package dev.sunnat629.kDateTimeX
 
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import kotlin.math.absoluteValue
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 /**
  * Contains functions to format date and time.
@@ -28,22 +24,7 @@ object TimeFormatter {
         return "$hours:$minutes:$seconds"
     }
 
-    /**
-     * Formats a timestamp (in milliseconds) to a human-readable time string "HH:mm:ss.SSS".
-     *
-     * @param timestampMillis The timestamp in milliseconds.
-     * @return The formatted time string.
-     */
-    fun formatMillisecondsToTime(timestampMillis: Long?): String {
-        if (timestampMillis == null || timestampMillis < 0) return "00:00:00.000"
-        val dateTime = Instant.fromEpochMilliseconds(timestampMillis).toLocalDateTime(TimeZone.UTC)
-        val hours = dateTime.hour.toDoubleDigitString()
-        val minutes = dateTime.minute.toDoubleDigitString()
-        val seconds = dateTime.second.toDoubleDigitString()
-        val milliseconds = (dateTime.nanosecond / 1_000_000).toInt().toTripleDigitString()
-        return "$hours:$minutes:$seconds.$milliseconds"
-    }
-
+   
     /**
      * Formats a timestamp (in milliseconds) to a human-readable date string "YYYY-MM-DD".
      *
@@ -57,22 +38,6 @@ object TimeFormatter {
         val month = dateTime.monthNumber.toDoubleDigitString()
         val day = dateTime.dayOfMonth.toDoubleDigitString()
         return "$year-$month-$day"
-    }
-
-    /**
-     * Converts a timestamp to a formatted date-time string "dd.MM.yyyy • HH:mm".
-     *
-     * @param timestamp The timestamp in epoch seconds.
-     * @return The formatted date-time string.
-     */
-    fun formatTimestampToDateTime(timestamp: Long): String {
-        val dateTime = timestamp.toLocalDateTime()
-        val day = dateTime.dayOfMonth.toDoubleDigitString()
-        val month = dateTime.monthNumber.toDoubleDigitString()
-        val year = dateTime.year.toString()
-        val hour = dateTime.hour.toDoubleDigitString()
-        val minute = dateTime.minute.toDoubleDigitString()
-        return "$day.$month.$year • $hour:$minute"
     }
 
     /**
@@ -124,5 +89,113 @@ object TimeFormatter {
         val seconds = (totalSeconds % 60).toInt().toDoubleDigitString()
         val milliseconds = ((duration.inWholeMilliseconds.absoluteValue % 1000) / 100).toInt()
         return "$sign$hours:$minutes:$seconds.$milliseconds"
+    }
+
+    // Get formatted time with optional live indicator
+    fun formatTime(
+        startTime: Long?,
+        timeZone: TimeZone = TimeZone.currentSystemDefault(),
+        isLive: Boolean? = null
+    ): String? {
+        if (startTime == null) return null
+
+        val now = Clock.System.now().epochSeconds
+        val currentDateTime = Clock.System.now().toLocalDateTime(timeZone)
+        val targetDateTime = Instant.fromEpochSeconds(startTime).toLocalDateTime(timeZone)
+
+        val hour = targetDateTime.hour.toDoubleDigitString()
+        val minute = targetDateTime.minute.toDoubleDigitString()
+        val dayOfMonth = targetDateTime.dayOfMonth.toDoubleDigitString()
+        val month = targetDateTime.month.name.take(3)
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        val year = targetDateTime.year
+        val weekday = targetDateTime.dayOfWeek.name.take(3)
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+        val isToday = targetDateTime.date == currentDateTime.date
+        val isYesterday = targetDateTime.date == currentDateTime.date.minus(1, DateTimeUnit.DAY)
+        val isTomorrow = targetDateTime.date == currentDateTime.date.plus(1, DateTimeUnit.DAY)
+        val isPast = startTime < now
+        val isSameYear = targetDateTime.year == currentDateTime.year
+
+        return when {
+            isToday -> if (isPast && isLive == false) "Today" else "Today • $hour:$minute"
+            isYesterday -> "Yesterday"
+            isTomorrow -> "Tomorrow • $hour:$minute"
+            else -> {
+                val dateStr = if (isSameYear) "$weekday, $dayOfMonth $month" else "$dayOfMonth $month $year"
+                if (isPast) dateStr else "$dateStr • $hour:$minute"
+            }
+        }
+    }
+
+    /**
+     * Converts a timestamp to a formatted date-time string "dd.MM.yyyy • HH:mm".
+     *
+     * @param timestamp The timestamp in epoch seconds.
+     * @return The formatted date-time string.
+     */
+    fun formatTimestampToDateTime(timestamp: Long): String {
+        val dateTime = timestamp.toLocalDateTime()
+        val day = dateTime.dayOfMonth.toDoubleDigitString()
+        val month = dateTime.monthNumber.toDoubleDigitString()
+        val year = dateTime.year.toString()
+        val hour = dateTime.hour.toDoubleDigitString()
+        val minute = dateTime.minute.toDoubleDigitString()
+        return "$day.$month.$year • $hour:$minute"
+    }
+
+    // Format timestamp to a human-readable date and time string
+    fun formatTimestampToDateTime(startTime: Long?, timeZone: TimeZone = TimeZone.currentSystemDefault()): String? {
+        if (startTime == null) return null
+        val localDateTime = Instant.fromEpochSeconds(startTime).toLocalDateTime(timeZone)
+        val hour = localDateTime.hour.toDoubleDigitString()
+        val minute = localDateTime.minute.toDoubleDigitString()
+        val dayOfMonth = localDateTime.dayOfMonth.toDoubleDigitString()
+        val month = localDateTime.month.name.take(3)
+            .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+        val year = localDateTime.year
+        return "$month $dayOfMonth, $year • $hour:$minute"
+    }
+
+    // Convert an Instant to a human-readable local date and time
+    fun convertInstantToHumanTime(instant: Instant, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+        val localDateTime = instant.toLocalDateTime(timeZone)
+        val (hour, minute, second, millisecond) = extractFormattedTimeComponents(localDateTime)
+        val month = localDateTime.monthNumber
+        val day = localDateTime.dayOfMonth
+        val year = localDateTime.year
+        return "$day/$month/$year $hour:$minute:$second.$millisecond"
+    }
+
+    // Extract formatted time components from LocalDateTime
+    fun extractFormattedTimeComponents(localDateTime: LocalDateTime): List<String> {
+        val hour = localDateTime.hour.toDoubleDigitString()
+        val minute = localDateTime.minute.toDoubleDigitString()
+        val second = localDateTime.second.toDoubleDigitString()
+        val millisecond = (localDateTime.nanosecond / 1_000_000).toString().padStart(3, '0')
+        return listOf(hour, minute, second, millisecond)
+    }
+
+    // Format the difference in time (Duration) to a readable string
+    fun formatDurationToReadableString(duration: Duration): String {
+        val sign = if (duration.isNegative()) "-" else "+"
+        val totalSeconds = duration.inWholeSeconds
+        val hours = (totalSeconds / 3600).toDoubleDigitString()
+        val minutes = ((totalSeconds % 3600) / 60).toDoubleDigitString()
+        val seconds = (totalSeconds % 60).toDoubleDigitString()
+        val milliseconds = ((duration.inWholeNanoseconds % 1_000_000_000) / 1_000_000).toString().padStart(1, '0')
+        return "$sign$hours:$minutes:$seconds.$milliseconds"
+    }
+
+    // Format timestamp in milliseconds to human-readable time
+    fun formatMillisecondsToTime(timestampMillis: Long?, timeZone: TimeZone = TimeZone.currentSystemDefault()): String {
+        if (timestampMillis == null || timestampMillis < 0) return "00:00:00.000"
+        val dateTime = Instant.fromEpochMilliseconds(timestampMillis).toLocalDateTime(timeZone)
+        val hours = dateTime.hour.toDoubleDigitString()
+        val minutes = dateTime.minute.toDoubleDigitString()
+        val seconds = dateTime.second.toDoubleDigitString()
+        val milliseconds = (dateTime.nanosecond / 1_000_000).toString().padStart(3, '0')
+        return "$hours:$minutes:$seconds.$milliseconds"
     }
 }
